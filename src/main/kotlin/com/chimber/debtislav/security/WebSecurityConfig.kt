@@ -57,7 +57,7 @@ class WebSecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
-        configuration.allowedOriginPatterns = listOf("*") // TODO
+        configuration.allowedOriginPatterns = listOf("*")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("authorization", "content-type", "x-auth-token")
         configuration.exposedHeaders = listOf("x-auth-token", "set-cookie")
