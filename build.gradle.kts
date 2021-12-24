@@ -18,9 +18,12 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
+    implementation("com.auth0:java-jwt:3.18.2")
+    implementation("org.springframework.boot:spring-boot-starter-security:2.6.1")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.1")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.6.1")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.1")
 }
 
 tasks.withType<KotlinCompile> {
