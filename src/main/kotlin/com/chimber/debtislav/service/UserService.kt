@@ -1,8 +1,8 @@
 package com.chimber.debtislav.service
 
-import com.chimber.debtislav.model.AppUser
 import com.chimber.debtislav.dto.RegistrationRequest
 import com.chimber.debtislav.exception.UserNotFoundException
+import com.chimber.debtislav.model.User
 import com.chimber.debtislav.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,12 +23,12 @@ class UserService(
             throw IllegalStateException("User with this name already exists")
         }
         val encodedPassword: String = passwordEncoder.encode(registrationRequest.password)
-        val appUser = AppUser(
+        val user = User(
             email = registrationRequest.email,
             username = registrationRequest.username,
             password = encodedPassword,
         )
-        userRepository.save(appUser)
+        userRepository.save(user)
     }
 
     fun getUsername(username: String): String {

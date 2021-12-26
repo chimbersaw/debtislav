@@ -8,10 +8,10 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-data class AppUser(
+data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0,
+    val id: Long = 0,
 
     @Column(unique = true, nullable = false)
     private var username: String = "",
@@ -30,10 +30,12 @@ data class AppUser(
     @Column(name = "non_locked", nullable = false)
     private val nonLocked: Boolean = true,
     @Column(nullable = false)
-    private var enabled: Boolean = true,
+    private val enabled: Boolean = true,
     @Column(name = "credentials_non_expired", nullable = false)
     private val credentialsNonExpired: Boolean = true
 ) : UserDetails {
+    @ManyToMany(mappedBy = "userList", cascade = [CascadeType.ALL])
+    val groupList: MutableSet<Group> = HashSet()
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(
         GrantedAuthority {
@@ -58,12 +60,12 @@ data class AppUser(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        return id == (other as AppUser).id
+        return id == (other as User).id
     }
 
     override fun hashCode(): Int = javaClass.hashCode()
 
     override fun toString(): String {
-        return "AppUser(id=$id, username=$username, password=$password"
+        return "AppUser(id=$id, username=$username, password=$password)"
     }
 }

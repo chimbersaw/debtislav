@@ -3,9 +3,8 @@ package com.chimber.debtislav.security.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.chimber.debtislav.config.JWTConfig
-import com.chimber.debtislav.model.AppUser
+import com.chimber.debtislav.model.User
 import com.chimber.debtislav.security.service.UserDetailsServiceImpl
-import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -34,7 +33,7 @@ class JWTAuthenticationFilter(
         chain: FilterChain,
         authResult: Authentication?
     ) {
-        val user = authResult?.principal as? AppUser
+        val user = authResult?.principal as? User
             ?: throw IllegalArgumentException("authResult must be an instance of User")
         val token = JWT.create()
             .withSubject(user.username)
@@ -43,8 +42,6 @@ class JWTAuthenticationFilter(
         userService.updateToken(user.username, token)
         val cookie = Cookie(AUTH_COOKIE, token)
         response.addCookie(cookie)
-        val header = response.getHeader(HttpHeaders.SET_COOKIE)
-        response.setHeader(HttpHeaders.SET_COOKIE, header)
         chain.doFilter(request, response)
     }
 }
