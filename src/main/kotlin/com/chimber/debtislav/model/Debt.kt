@@ -3,6 +3,12 @@ package com.chimber.debtislav.model
 import org.hibernate.Hibernate
 import javax.persistence.*
 
+enum class DebtStatus {
+    REQUESTED,
+    ACTIVE,
+    PAID
+}
+
 
 @Entity
 @Table(name = "debt")
@@ -15,7 +21,7 @@ data class Debt(
     var group_id: Long = 0,
 
     @Column(nullable = false)
-    var amount: Long = 0,
+    var amount: Int = 0,
 
     @Column(nullable = false)
     var lender_id: Long = 0,
@@ -27,7 +33,8 @@ data class Debt(
     var description: String = "",
 
     @Column(nullable = false)
-    var paid: Boolean = false,
+    @Enumerated(EnumType.STRING)
+    var status: DebtStatus = DebtStatus.REQUESTED
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -42,7 +49,6 @@ data class Debt(
     @Override
     override fun toString(): String {
         return "Debt(id=$id, group_id=$group_id, amount=$amount, lender_id=$lender_id," +
-                " loaner_id=$loaner_id, description=$description, paid=$paid)"
+                " loaner_id=$loaner_id, description=$description, status=$status)"
     }
-
 }

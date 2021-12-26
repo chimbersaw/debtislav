@@ -19,19 +19,25 @@ CREATE TABLE groups (
     admin_id INT  NOT NULL REFERENCES users (id)
 );
 
-CREATE TABLE debt (
-    id          SERIAL PRIMARY KEY,
-    group_id    INT NOT NULL REFERENCES groups (id),
-    amount      INT NOT NULL CHECK (amount > 0),
-    lender_id   INT NOT NULL REFERENCES users (id),
-    loaner_id   INT NOT NULL REFERENCES users (id),
-    description TEXT,
-    paid        BOOLEAN NOT NULL,
-    CHECK (lender_id != loaner_id)
-);
-
 CREATE TABLE user_in_group (
     user_id  INT REFERENCES users (id),
     group_id INT REFERENCES groups (id),
     PRIMARY KEY (user_id, group_id)
+);
+
+CREATE TYPE debt_status AS ENUM (
+    'REQUESTED',
+    'ACTIVE',
+    'PAID'
+    );
+
+CREATE TABLE debt (
+    id          SERIAL PRIMARY KEY,
+    group_id    INT         NOT NULL REFERENCES groups (id),
+    amount      INT         NOT NULL CHECK (amount > 0),
+    lender_id   INT         NOT NULL REFERENCES users (id),
+    loaner_id   INT         NOT NULL REFERENCES users (id),
+    description TEXT,
+    status      debt_status NOT NULL,
+    CHECK (lender_id != loaner_id)
 );

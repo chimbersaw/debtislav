@@ -16,7 +16,7 @@ class DataSourceConfig {
             dataSourceBuilder.url(connectionUrl)
             dataSourceBuilder.driverClassName("org.postgresql.Driver")
         } else {
-            dataSourceBuilder.url("jdbc:postgresql://localhost:5432/debtislav_db?createDatabaseIfNotExist=true&currentSchema=public&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC")
+            dataSourceBuilder.url("jdbc:postgresql://localhost:5432/debtislav_db?createDatabaseIfNotExist=true&currentSchema=public&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&stringtype=unspecified")
             dataSourceBuilder.driverClassName("org.postgresql.Driver")
             dataSourceBuilder.username("postgres")
             dataSourceBuilder.password("postgres")
