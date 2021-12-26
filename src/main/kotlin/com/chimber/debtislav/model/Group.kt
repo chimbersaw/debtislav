@@ -12,7 +12,10 @@ data class Group(
     val id: Long = 0,
 
     @Column(unique = true, nullable = false)
-    var name: String = ""
+    var name: String = "",
+
+    @Column(nullable = false)
+    var admin_id: Long = 0
 ) {
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinTable(

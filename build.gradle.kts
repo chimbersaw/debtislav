@@ -23,7 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.1")
     implementation("org.springframework.boot:spring-boot-starter-web:2.6.1")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.5.12")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.0")
+    implementation("org.springdoc:springdoc-openapi-ui:1.5.12")
     runtimeOnly("org.postgresql:postgresql:42.3.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.1")
 }

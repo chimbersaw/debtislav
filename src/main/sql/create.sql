@@ -14,8 +14,9 @@ CREATE TABLE users (
 );
 
 CREATE TABLE groups (
-    id   SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    id       SERIAL PRIMARY KEY,
+    name     TEXT NOT NULL,
+    admin_id INT  NOT NULL REFERENCES users (id)
 );
 
 CREATE TABLE debt (

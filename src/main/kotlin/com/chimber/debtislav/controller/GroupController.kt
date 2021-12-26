@@ -23,7 +23,7 @@ class GroupController(private val groupService: GroupService) {
 
     @PostMapping("/add")
     fun addUser(@RequestBody request: AddUserToGroupRequest) {
-        groupService.addToGroup(request.username, request.groupId)
+        groupService.addToGroup(getCurrentUsername(), request.username, request.groupId)
     }
 
     @GetMapping("/users")
