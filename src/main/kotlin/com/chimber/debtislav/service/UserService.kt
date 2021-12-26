@@ -13,6 +13,12 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
+    private fun getUserOrThrow(username: String): User {
+        return userRepository.findByUsername(username).orElseThrow {
+            UserNotFoundException("No user with name $username exists")
+        }
+    }
+
     fun registerUser(registrationRequest: RegistrationRequest) {
         val emailExists = userRepository.findByEmail(registrationRequest.email).isPresent
         if (emailExists) {
@@ -31,9 +37,8 @@ class UserService(
         userRepository.save(user)
     }
 
-    fun getUsername(username: String): String {
-        return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("No user with name $username exists")
-        }.username
+    fun getAllGroups(username: String): List<String> {
+        val user = getUserOrThrow(username)
+        return user.groupList.map { it.name }.toList()
     }
 }

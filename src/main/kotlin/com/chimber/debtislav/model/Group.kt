@@ -12,7 +12,7 @@ data class Group(
     val id: Long = 0,
 
     @Column(unique = true, nullable = false)
-    private var name: String = ""
+    var name: String = ""
 ) {
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinTable(
