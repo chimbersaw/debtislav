@@ -49,6 +49,11 @@ class GroupService(
 
     fun getAllUsers(groupId: Long): List<String> {
         val group = getGroupOrThrow(groupId)
-        return group.userList.map { it.username }.toList()
+        return group.userList.map { it.toString() }.toList()
+    }
+
+    fun getAllDebts(groupId: Long): List<String> {
+        val group = getGroupOrThrow(groupId)
+        return group.debtList.map { it.toString() }.toList()
     }
 }

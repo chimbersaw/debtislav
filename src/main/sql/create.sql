@@ -26,7 +26,7 @@ CREATE TABLE debt (
     lender_id   INT NOT NULL REFERENCES users (id),
     loaner_id   INT NOT NULL REFERENCES users (id),
     description TEXT,
-    paid        BOOLEAN,
+    paid        BOOLEAN NOT NULL,
     CHECK (lender_id != loaner_id)
 );
 

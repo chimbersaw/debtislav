@@ -66,6 +66,6 @@ data class User(
     override fun hashCode(): Int = javaClass.hashCode()
 
     override fun toString(): String {
-        return "AppUser(id=$id, username=$username, password=$password)"
+        return username
     }
 }

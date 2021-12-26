@@ -30,4 +30,9 @@ class GroupController(private val groupService: GroupService) {
     fun getAllUsers(@RequestBody request: GroupIdRequest): List<String> {
         return groupService.getAllUsers(request.id)
     }
+
+    @GetMapping("/debts")
+    fun getAllDebts(@RequestBody request: GroupIdRequest): List<String> {
+        return groupService.getAllDebts(request.id)
+    }
 }
