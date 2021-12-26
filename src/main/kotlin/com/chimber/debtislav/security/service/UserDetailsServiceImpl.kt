@@ -4,21 +4,17 @@ import com.chimber.debtislav.model.User
 import com.chimber.debtislav.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 
 @Service
 class UserDetailsServiceImpl(private val userRepository: UserRepository) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        return userRepository.findByUsername(username).orElseThrow {
-            UsernameNotFoundException(username)
-        }
+        return findByName(username)
     }
 
     fun findByName(username: String): User {
-        return userRepository.findByUsername(username)
-            .orElseThrow { throw UsernameNotFoundException("No user with name $username") }
+        return userRepository.getUserOrThrow(username)
     }
 
     fun updateToken(username: String, token: String?) {
