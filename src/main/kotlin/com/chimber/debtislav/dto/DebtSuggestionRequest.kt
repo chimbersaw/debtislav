@@ -1,6 +1,6 @@
 package com.chimber.debtislav.dto
 
-data class DebtRequest(
+data class DebtSuggestionRequest(
     val groupId: Long,
     val loaner: String,
     val amount: Int,
