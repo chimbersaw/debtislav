@@ -1,7 +1,9 @@
 package com.chimber.debtislav.service
 
 import com.chimber.debtislav.dto.RegistrationRequest
+import com.chimber.debtislav.model.Debt
 import com.chimber.debtislav.model.User
+import com.chimber.debtislav.repository.GroupRepository
 import com.chimber.debtislav.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
     fun registerUser(registrationRequest: RegistrationRequest) {
@@ -32,5 +35,15 @@ class UserService(
 
     fun getAllGroups(user: User): List<String> {
         return user.groupList.map { it.name }.toList()
+    }
+
+    fun getMyDebts(user: User, groupId: Long): List<Debt> {
+        val group = groupRepository.getGroupOrThrow(groupId)
+        return group.debtList.filter { it.loaner_id == user.id }
+    }
+
+    fun getDebtsToMe(user: User, groupId: Long): List<Debt> {
+        val group = groupRepository.getGroupOrThrow(groupId)
+        return group.debtList.filter { it.lender_id == user.id }
     }
 }
