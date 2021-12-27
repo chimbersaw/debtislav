@@ -2,7 +2,10 @@ package com.chimber.debtislav.service
 
 import com.chimber.debtislav.dto.DebtAddRequest
 import com.chimber.debtislav.dto.DebtSuggestionRequest
-import com.chimber.debtislav.exception.*
+import com.chimber.debtislav.exception.DebtNotFoundException
+import com.chimber.debtislav.exception.GroupNotFoundException
+import com.chimber.debtislav.exception.WrongAmountException
+import com.chimber.debtislav.exception.WrongUserRelationException
 import com.chimber.debtislav.model.Debt
 import com.chimber.debtislav.model.DebtStatus
 import com.chimber.debtislav.model.Group
@@ -19,32 +22,19 @@ class DebtService(
     private val groupRepository: GroupRepository,
     private val userRepository: UserRepository
 ) {
-    fun getUserOrThrow(username: String): User {
-        return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("No user with name $username exists")
-        }
-    }
-
-    fun getGroupOrThrow(groupId: Long): Group {
-        return groupRepository.findById(groupId).orElseThrow {
-            GroupNotFoundException("No group with id $groupId exists")
-        }
-    }
-
-    fun checkUserInGroupOrThrow(user: User, groupId: Long, name: String = "User") {
+    private fun checkUserInGroupOrThrow(user: User, groupId: Long, name: String = "User") {
         if (!user.groupList.map { it.id }.contains(groupId)) {
             throw GroupNotFoundException("$name does not belong to group with id $groupId")
         }
     }
 
-    fun checkAmountPositiveOrThrow(amount: Int) {
+    private fun checkAmountPositiveOrThrow(amount: Int) {
         if (amount <= 0) {
             throw WrongAmountException("Amount must be positive but is actually $amount")
         }
     }
 
-    fun getDebtGroupOrThrow(username: String, debtId: Long): Group {
-        val user = getUserOrThrow(username)
+    private fun getDebtGroupOrThrow(user: User, debtId: Long): Group {
         user.groupList.forEach { group ->
             if (group.debtList.any { it.id == debtId }) {
                 return group
@@ -53,10 +43,9 @@ class DebtService(
         throw DebtNotFoundException("Debt with id $debtId not found in user groups")
     }
 
-    fun requestDebt(currentName: String, request: DebtSuggestionRequest) {
-        val user = getUserOrThrow(currentName)
-        val group = getGroupOrThrow(request.groupId)
-        val loaner = getUserOrThrow(request.loaner)
+    fun requestDebt(user: User, request: DebtSuggestionRequest) {
+        val group = groupRepository.getGroupOrThrow(request.groupId)
+        val loaner = userRepository.getUserOrThrow(request.loaner)
 
         checkUserInGroupOrThrow(user, group.id)
         checkUserInGroupOrThrow(loaner, group.id, "Loaner")
@@ -73,10 +62,9 @@ class DebtService(
         debtRepository.save(debt)
     }
 
-    fun addOwnDebt(currentName: String, request: DebtAddRequest) {
-        val user = getUserOrThrow(currentName)
-        val group = getGroupOrThrow(request.groupId)
-        val lender = getUserOrThrow(request.lender)
+    fun addOwnDebt(user: User, request: DebtAddRequest) {
+        val group = groupRepository.getGroupOrThrow(request.groupId)
+        val lender = userRepository.getUserOrThrow(request.lender)
 
         checkUserInGroupOrThrow(user, group.id)
         checkUserInGroupOrThrow(lender, group.id, "Lender")
@@ -93,9 +81,8 @@ class DebtService(
         debtRepository.save(debt)
     }
 
-    fun acceptDebt(username: String, debtId: Long) {
-        val user = getUserOrThrow(username)
-        val debt = getDebtGroupOrThrow(username, debtId).debtList.first { it.id == debtId }
+    fun acceptDebt(user: User, debtId: Long) {
+        val debt = getDebtGroupOrThrow(user, debtId).debtList.first { it.id == debtId }
         if (debt.loaner_id != user.id) {
             throw WrongUserRelationException("You must be a debt's loaner to accept it.")
         }
@@ -103,9 +90,8 @@ class DebtService(
         debtRepository.save(debt)
     }
 
-    fun rejectDebt(username: String, debtId: Long) {
-        val user = getUserOrThrow(username)
-        val group = getDebtGroupOrThrow(username, debtId)
+    fun rejectDebt(user: User, debtId: Long) {
+        val group = getDebtGroupOrThrow(user, debtId)
         val debt = group.debtList.first { it.id == debtId }
         if (debt.loaner_id != user.id) {
             throw WrongUserRelationException("You must be a debt's loaner to reject it.")
@@ -115,9 +101,8 @@ class DebtService(
         debtRepository.delete(debt)
     }
 
-    fun closeDebt(username: String, debtId: Long) {
-        val user = getUserOrThrow(username)
-        val debt = getDebtGroupOrThrow(username, debtId).debtList.first { it.id == debtId }
+    fun closeDebt(user: User, debtId: Long) {
+        val debt = getDebtGroupOrThrow(user, debtId).debtList.first { it.id == debtId }
         if (debt.lender_id != user.id) {
             throw WrongUserRelationException("You must be a debt's lender to close it.")
         }

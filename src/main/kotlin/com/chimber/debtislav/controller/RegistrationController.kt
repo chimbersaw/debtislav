@@ -1,7 +1,6 @@
 package com.chimber.debtislav.controller
 
 import com.chimber.debtislav.dto.RegistrationRequest
-import com.chimber.debtislav.exception.EmailNotValidException
 import com.chimber.debtislav.service.RegistrationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,8 +20,6 @@ class RegistrationController(private val registrationService: RegistrationServic
             ResponseEntity("Registration successful", HttpStatus.OK)
         } catch (e: IllegalStateException) {
             ResponseEntity("Registration failed: ${e.message}", HttpStatus.CONFLICT)
-        } catch (e: EmailNotValidException) {
-            ResponseEntity("Email not valid", HttpStatus.CONFLICT)
         }
     }
 }
