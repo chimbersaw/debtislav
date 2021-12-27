@@ -4,6 +4,7 @@ package com.chimber.debtislav.controller;
 import com.chimber.debtislav.dto.AddUserToGroupRequest
 import com.chimber.debtislav.dto.GroupCreateRequest
 import com.chimber.debtislav.dto.GroupIdRequest
+import com.chimber.debtislav.model.Debt
 import com.chimber.debtislav.repository.UserRepository
 import com.chimber.debtislav.service.GroupService
 import org.springframework.web.bind.annotation.*
@@ -31,7 +32,7 @@ class GroupController(
     }
 
     @GetMapping("/debts")
-    fun getAllDebts(@RequestBody request: GroupIdRequest): List<String> {
+    fun getAllDebts(@RequestBody request: GroupIdRequest): List<Debt> {
         return groupService.getAllDebts(request.id)
     }
 }

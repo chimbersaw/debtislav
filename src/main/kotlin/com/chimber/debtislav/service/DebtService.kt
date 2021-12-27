@@ -2,6 +2,7 @@ package com.chimber.debtislav.service
 
 import com.chimber.debtislav.dto.DebtAddRequest
 import com.chimber.debtislav.dto.DebtSuggestionRequest
+import com.chimber.debtislav.dto.GroupDebtSuggestionRequest
 import com.chimber.debtislav.exception.DebtNotFoundException
 import com.chimber.debtislav.exception.GroupNotFoundException
 import com.chimber.debtislav.exception.WrongAmountException
@@ -62,6 +63,34 @@ class DebtService(
         debtRepository.save(debt)
     }
 
+    fun requestGroupDebt(user: User, request: GroupDebtSuggestionRequest) {
+        val group = groupRepository.getGroupOrThrow(request.groupId)
+
+        checkAmountPositiveOrThrow(request.amount)
+        checkUserInGroupOrThrow(user, group.id)
+
+        val groupSize = group.userList.size
+        if (groupSize == 1) {
+            throw GroupNotFoundException("Group size must be at least two to request a group debt.")
+        }
+
+        val eachAmount = request.amount / groupSize
+        // The remainder is paid by the user (0 <= remainder < groupSize)
+        for (loaner in group.userList) {
+            if (loaner == user) continue
+
+            val debt = Debt(
+                group_id = group.id,
+                amount = eachAmount,
+                lender_id = user.id,
+                loaner_id = loaner.id,
+                description = request.description ?: "",
+                status = DebtStatus.REQUESTED
+            )
+            debtRepository.save(debt)
+        }
+    }
+
     fun addOwnDebt(user: User, request: DebtAddRequest) {
         val group = groupRepository.getGroupOrThrow(request.groupId)
         val lender = userRepository.getUserOrThrow(request.lender)
@@ -93,8 +122,8 @@ class DebtService(
     fun rejectDebt(user: User, debtId: Long) {
         val group = getDebtGroupOrThrow(user, debtId)
         val debt = group.debtList.first { it.id == debtId }
-        if (debt.loaner_id != user.id) {
-            throw WrongUserRelationException("You must be a debt's loaner to reject it.")
+        if (user.id != debt.loaner_id && user.id != debt.lender_id) {
+            throw WrongUserRelationException("You must be a debt's loaner or lender to reject it.")
         }
         group.debtList.removeIf { it.id == debt.id }
         groupRepository.save(group)

@@ -1,6 +1,7 @@
 package com.chimber.debtislav.service
 
 import com.chimber.debtislav.exception.NotAuthorizedException
+import com.chimber.debtislav.model.Debt
 import com.chimber.debtislav.model.Group
 import com.chimber.debtislav.model.User
 import com.chimber.debtislav.repository.GroupRepository
@@ -34,8 +35,8 @@ class GroupService(
         return group.userList.map { it.toString() }.toList()
     }
 
-    fun getAllDebts(groupId: Long): List<String> {
+    fun getAllDebts(groupId: Long): List<Debt> {
         val group = groupRepository.getGroupOrThrow(groupId)
-        return group.debtList.map { it.toString() }.toList()
+        return group.debtList.toList()
     }
 }

@@ -4,6 +4,7 @@ package com.chimber.debtislav.controller;
 import com.chimber.debtislav.dto.DebtAddRequest
 import com.chimber.debtislav.dto.DebtIdRequest
 import com.chimber.debtislav.dto.DebtSuggestionRequest
+import com.chimber.debtislav.dto.GroupDebtSuggestionRequest
 import com.chimber.debtislav.repository.UserRepository
 import com.chimber.debtislav.service.DebtService
 import org.springframework.web.bind.annotation.*
@@ -18,6 +19,11 @@ class DebtController(
     @PostMapping("/request")
     fun addDebtRequest(@RequestBody request: DebtSuggestionRequest) {
         debtService.requestDebt(currentUser, request)
+    }
+
+    @PostMapping("/group/request")
+    fun addGroupDebtRequest(@RequestBody request: GroupDebtSuggestionRequest) {
+        debtService.requestGroupDebt(currentUser, request)
     }
 
     @PostMapping("/add")
