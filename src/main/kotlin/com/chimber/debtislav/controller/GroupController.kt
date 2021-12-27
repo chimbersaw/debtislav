@@ -44,4 +44,9 @@ class GroupController(
     fun minimizeDebts(@RequestBody request: GroupIdRequest) {
         groupService.minimizeDebts(groupRepository.getGroupOrThrow(request.id))
     }
+
+    @PostMapping("/reduce_cycles")
+    fun reduceCycles(@RequestBody request: GroupIdRequest) {
+        groupService.reduceCycles(groupRepository.getGroupOrThrow(request.id))
+    }
 }

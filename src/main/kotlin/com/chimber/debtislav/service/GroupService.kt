@@ -7,6 +7,8 @@ import com.chimber.debtislav.model.Group
 import com.chimber.debtislav.model.User
 import com.chimber.debtislav.repository.DebtRepository
 import com.chimber.debtislav.repository.GroupRepository
+import com.chimber.debtislav.util.Edge
+import com.chimber.debtislav.util.Graph
 import org.springframework.stereotype.Service
 
 
@@ -41,6 +43,7 @@ class GroupService(
     }
 
     fun minimizeDebts(group: Group) {
+        // maximum one debt for each person
         val debts = group.debtList.filter { it.status == DebtStatus.ACTIVE }
         val balance = mutableMapOf<Long, Int>()
         for (debt in debts) {
@@ -88,6 +91,32 @@ class GroupService(
                 status = DebtStatus.ACTIVE
             )
             newDebts.add(debt)
+            debtRepository.save(debt)
+        }
+
+        for (debt in debts) {
+            group.debtList.removeIf { it.id == debt.id }
+            debtRepository.delete(debt)
+        }
+        group.debtList.addAll(newDebts)
+        groupRepository.save(group)
+    }
+
+    fun reduceCycles(group: Group) {
+        // gets rid of all cycles
+        val debts = group.debtList.filter { it.status == DebtStatus.ACTIVE }
+        val edges = debts.map { Edge(it.loaner_id, it.lender_id, it.amount) }
+        val graph = Graph(edges)
+        graph.reduceAllCycles()
+        val newDebts = graph.edges.map { edge ->
+            val debt = Debt(
+                group_id = group.id,
+                amount = edge.weight,
+                lender_id = edge.b,
+                loaner_id = edge.a,
+                description = "Artificial debt after reducing cycles",
+                status = DebtStatus.ACTIVE
+            )
             debtRepository.save(debt)
         }
 
