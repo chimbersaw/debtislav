@@ -51,8 +51,6 @@ class GroupService(
             balance.compute(debt.lender_id) { _, v -> (v ?: 0) + debt.amount }
         }
         val users = balance.keys.toList().sortedBy { balance[it] }
-        println(balance)
-        println(users)
         var i = 0
         var j = users.size - 1
         val newDebts = mutableListOf<Debt>()

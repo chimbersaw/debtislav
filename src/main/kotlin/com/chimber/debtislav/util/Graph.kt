@@ -16,10 +16,10 @@ class Graph<T>(edgesList: List<Edge<T>>) {
 
     private fun dfs(v: T, g: Map<T, List<Edge<T>>>, used: MutableMap<T, Int>): MutableList<Edge<T>>? {
         used[v] = 1
-        if (g[v] == null) {
+        val outEdges = g[v] ?: run {
             used[v] = 2
+            return null
         }
-        val outEdges = g[v] ?: return null
         for (edge in outEdges) {
             val x = edge.b
             if (used[x] == 0) {
